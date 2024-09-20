@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+    <script src="{% static 'GradeManage/script.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="login">
+      <div class="login_form" style="width: 57rem">
+        <h1>批量导入</h1>
+        <p>请上传CSV格式的文件，文件内容格式必须如下（列名请不要改动）：</p>
+        <table>
+          <thead>
+            <tr>
+              <th>课程</th>
+              <th>学生</th>
+              <th>成绩</th>
+              <th>登记日期</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>JCKC0001</td>
+              <td>20220001</td>
+              <td>90</td>
+              <td>2024-9-20（格式：YYYY-MM-DD）</td>
+            </tr>
+            <tr>
+              <td>…</td>
+              <td>…</td>
+              <td>…</td>
+              <td>…</td>
+            </tr>
+          </tbody>
+        </table>
+        <form
+          method="post"
+          enctype="multipart/form-data"
+          style="width: 100%; margin-top: 2rem"
+        >
+          {% csrf_token %} 
+          {{ form.file.label_tag }} 
+          {{ form.file }}
+
+           {% if result %}
+          <h2>上传结果</h2>
+          <p>成功导入记录数: {{ result.success_count }}</p>
+          <p>失败记录数: {{ result.fail_count }}</p>
+          {% if result.fail_count > 0 %}
+          <h3>失败记录详情:</h3>
+          <ul>
+            {% for detail in result.fail_details %}
+            <li>行数据: {{ detail.row }}, 错误: {{ detail.error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %} 
+          {% endif %}
+           {% if error %}
+          <p style="color: red">错误：{{ error }}</p>
+          {% endif %}
+          
+          <button type="submit" style="font-size: 1rem; margin-top: 1rem">
+            上传
+          </button>
+        </form>
+        <a
+          href="{% url 'GradeManage:score_create' %}"
+          class="btn btn-secondary"
+          style="margin-top: 5px"
+          >返回</a
+        >
+      </div>
+    </div>
+
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}">首页</a>
+      <a
+        href="{% url 'GradeManage:student_list' %}"
+        style="color: #3f72af; background-color: #efefef"
+        >学生信息</a
+      >
+      <a href="{% url 'GradeManage:course_list' %}">课程信息</a>
+      <a href="{% url 'GradeManage:grade_index' %}">成绩管理</a>
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main">
+      <div class="side-bar"></div>
+      <div class="content">
+        <h1>学生信息表</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>学号</th>
+              <th>姓名</th>
+              <th>性别</th>
+              <th>出生日期</th>
+              <th>专业</th>
+              <th>学院</th>
+              <th style="width: 145px">操作</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

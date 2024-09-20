@@ -1,0 +1,76 @@
+asgiref==3.8.1
+attrs==24.2.0
+autocomplete-light==1.1.5
+Bottleneck @ file:///C:/b/abs_f7un855idq/croot/bottleneck_1709069969633/work
+certifi==2024.7.4
+cffi==1.17.1
+charset-normalizer==3.3.2
+colorama==0.4.6
+contourpy @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/contourpy_1701817388761/work
+coverage==7.6.1
+cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
+Django==5.0.9
+django-appconf==1.0.6
+django-extensions==3.2.3
+django-pagination==1.0.7
+django-select2==8.2.1
+fonttools @ file:///C:/b/abs_f47gnfqnx0/croot/fonttools_1713551644747/work
+fqdn==1.5.1
+h11==0.14.0
+huggingface-hub==0.23.4
+idna==3.7
+iniconfig==2.0.0
+isoduration==20.11.0
+kiwisolver @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/kiwisolver_1699476425777/work
+matplotlib==3.9.2
+mkl-service==2.4.0
+mkl_fft @ file:///C:/b/abs_f55mv94vyg/croot/mkl_fft_1725370278455/work
+mkl_random @ file:///C:/b/abs_21ydbzdu8d/croot/mkl_random_1725370276095/work
+mssql-django==1.5
+numexpr @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/numexpr_1699503421264/work
+numpy @ file:///C:/b/abs_c1ywpu18ar/croot/numpy_and_numpy_base_1708638681471/work/dist/numpy-1.26.4-cp312-cp312-win_amd64.whl#sha256=becc06674317799ad0165a939a7613809d0bee9bd328a1e4308c57c39cacf08c
+outcome==1.3.0.post0
+packaging @ file:///C:/b/abs_c3vlh0z4jw/croot/packaging_1720101866539/work
+pandas @ file:///C:/b/abs_9aotnvvz16/croot/pandas_1718308978393/work/dist/pandas-2.2.2-cp312-cp312-win_amd64.whl#sha256=93959056e02e9855025011adb18394296a58d49e72b9342733b7693a5267c790
+pillow @ file:///C:/b/abs_32o8er3uqp/croot/pillow_1721059447598/work
+pluggy==1.5.0
+ply @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/ply_1699473999871/work
+pycparser==2.22
+pyodbc==5.1.0
+pyparsing @ file:///C:/b/abs_520r19rysg/croot/pyparsing_1725041656021/work
+PyQt5==5.15.10
+PyQt5-sip @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/pyqt-split_1699478669290/work/pyqt_sip
+PySocks==1.7.1
+pytest==8.3.3
+pytest-cov==5.0.0
+pytest-splinter==3.3.2
+python-dateutil @ file:///C:/b/abs_3au_koqnbs/croot/python-dateutil_1716495777160/work
+pytz @ file:///C:/b/abs_6ap4tsz1ox/croot/pytz_1713974360290/work
+PyYAML==6.0.1
+regex==2024.5.15
+requests==2.32.3
+safetensors==0.4.3
+scikit-opt==0.6.6
+selenium==4.24.0
+setuptools==72.1.0
+sip @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/sip_1699475590677/work
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+sniffio==1.3.1
+sortedcontainers==2.4.0
+splinter==0.21.0
+sqlparse==0.5.1
+tensorboardX==2.6.2.2
+tokenizers==0.19.1
+tornado @ file:///C:/b/abs_7bua0304mj/croot/tornado_1718740122405/work
+tqdm==4.66.4
+trio==0.26.2
+trio-websocket==0.11.1
+typing_extensions==4.12.2
+tzdata @ file:///croot/python-tzdata_1690578112552/work
+unicodedata2 @ file:///C:/b/abs_b6apldlg7y/croot/unicodedata2_1713212998255/work
+uri-template==1.3.0
+urllib3==2.2.2
+webcolors==24.8.0
+websocket-client==1.8.0
+wheel==0.43.0
+wsproto==1.2.0

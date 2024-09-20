@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // 获取CSRF令牌
+        var csrftoken = "{{ csrf_token }}";
+
+        function csrfSafeMethod(method) {
+          // 这些HTTP方法不要求CSRF令牌
+          return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
+        }
+
+        $.ajaxSetup({
+          beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+          },
+        });
+
+        // 当学生选择改变时触发
+        $("#studentSelect").change(function () {
+          var studentId = $(this).val(); // 获取选中的学生ID
+          if (studentId) {
+            // 发送AJAX请求获取已选课程
+            $.ajax({
+              url: "/GradeManage/get_student_courses/" + studentId, // 确保URL路径是正确的
+              type: "GET",
+              success: function (data) {
+                // 重置所有复选框为可选状态
+                $('input[name="courses"]')
+                  .prop("disabled", false)
+                  .prop("checked", false);
+                // 成功获取数据后，禁用已选课程的复选框
+                $.each(data.courses, function (index, course_id) {
+                  $("#courseCheckbox" + course_id)
+                    .prop("disabled", true)
+                    .prop("checked", true);
+                });
+              },
+              error: function () {
+                alert("无法获取学生选课信息");
+              },
+            });
+          } else {
+            // 如果没有选择学生，则禁用所有复选框
+            $('input[name="courses"]')
+              .prop("disabled", true)
+              .prop("checked", false);
+          }
+        });
+
+        // 提交选课表单
+        $("#submitCourses").click(function (e) {
+          e.preventDefault(); // 阻止表单默认提交行为
+          var studentId = $("#studentSelect").val();
+          var selectedCourses = [];
+          $('input[name="courses"]:checked').each(function () {
+            selectedCourses.push($(this).val());
+          });
+          // 确保selectedCourses不是空的
+          if (selectedCourses.length === 0) {
+            alert("请至少选择一门课程。");
+            return;
+          }
+          console.log("Selected Courses:", selectedCourses); // 添加这行代码来调试
+          // 发送AJAX请求提交选课信息
+          $.ajax({
+            url: "/GradeManage/submit_courses/",
+            type: "POST",
+            data: {
+              student_id: studentId,
+              courses: selectedCourses,
+            },
+            success: function (response) {
+              alert(
+                response.message + "，已选课程：" + response.selected_courses
+              );
+              // 刷新选课状态
+              $("#studentSelect").trigger("change");
+            },
+            error: function (xhr, status, error) {
+              // xhr.responseJSON 通常包含服务器返回的错误详情
+              var errorMessage =
+                xhr.responseJSON && xhr.responseJSON.error
+                  ? xhr.responseJSON.error
+                  : "选课失败，请重试";
+              alert(errorMessage);
+            },
+          });
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}">首页</a>
+      <a href="{% url 'GradeManage:student_list' %}">学生信息</a>
+      <a
+        href="{% url 'GradeManage:course_list' %}"
+        style="color: #3f72af; background-color: #efefef"
+        >课程信息</a
+      >
+      <a href="{% url 'GradeManage:grade_index' %}">成绩管理</a>
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main">
+      <div class="side-bar">
+        <h2>功能选项</h2>
+        <a href="{% url 'GradeManage:grade_index' %}">成绩信息</a>
+        <a href="{% url 'GradeManage:select_course' %}">学生选课</a>
+        <a href="{% url 'GradeManage:score_create' %}">成绩录入</a>
+        <a href="#">成绩报表</a>
+        <a href="{% url 'GradeManage:export_grades_to_csv' %}">导出名单</a>
+      </div>
+      <div class="content">
+        <h1>学生选课</h1>
+        <div class="options">
+          <select id="studentSelect" name="student" class='select2' style='width: 100%'>
+            <option value="" selected="selected">请选择学生</option>
+            {% for student in students %}
+            <option value="{{ student.student_id }}">{{ student.name }}({{ student.student_id }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <form id="courseForm" method="post" enctype="application/x-www-form-urlencoded" charset="UTF-8">
+          {% csrf_token %}
+          <fieldset>
+            <legend>请选择课程</legend>
+            {% for course in courses %}
+            <div class="course-checkbox">
+              <input type="checkbox" id="courseCheckbox{{ course.course_id }}" name="courses" value="{{ course.course_id }}" />
+              <label for="courseCheckbox{{ course.course_id }}">{{ course.course_name }} （{{ course.course_id }}）</label>
+            </div>
+            {% endfor %}
+          </fieldset>
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="button" id="submitCourses" style='margin-top: 10px; width: 10rem;'>提交选课</button>
+        </div>
+        </form>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="{% static 'GradeManage/script.js' %}"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // 初始化Select2
+        $(".select2").select2();
+      });
+    </script>
+  </body>
+</html>

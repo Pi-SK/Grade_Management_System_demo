@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    {% csrf_token %}
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // 获取CSRF令牌
+        var csrftoken = "{{ csrf_token }}";
+
+        function csrfSafeMethod(method) {
+          // 这些HTTP方法不要求CSRF令牌
+          return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
+        }
+
+        $.ajaxSetup({
+          beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+          },
+        });
+
+        $("#selectCourse").change(function () {
+          var courseId = $(this).val();
+          if (courseId) {
+            $.ajax({
+              url: '{% url "GradeManage:get_students_by_course" %}',
+              type: "GET",
+              data: {
+                course_id: courseId,
+              },
+              dataType: "json",
+              success: function (data) {
+                console.log(data);
+                var content =
+                  "<table><thead><tr><th>学生学号</th><th>学生姓名</th><th>性别</th><th>学生专业</th><th>学生学院</th><th>成绩</th></tr></thead><tbody>";
+                  // 检查返回的数据是否为空数组
+                  if (data.length === 0) {
+                    content += '<tr><td colspan="6" style="text-align:center;">暂无学生选课</td></tr>';
+                  }  else {
+                  $.each(data, function (index, student) {
+                    content += "<tr>";
+                    content += "<td>" + student.student__student_id + "</td>";
+                    content += "<td>" + student.student__name + "</td>";
+                    content += "<td>" + student.student__gender + "</td>";
+                    content += "<td>" + student.student__major + "</td>";
+                    content += "<td>" + student.student__college + "</td>";
+                    content +=
+                      '<td><input type="text" class="score-input" data-student-id="' +
+                      student.student__student_id +
+                      '" value="' +
+                      student.score +
+                      '"></td>';
+                    content += "</tr>";
+                  });
+                }
+                content += "</tbody></table>";
+                $(".form-content").html(content);
+
+                // 提交成绩按钮的点击事件绑定
+                $(document).on("click", "#submitScores", function () {
+                  var scoresToUpdate = [];
+                  $(".score-input").each(function () {
+                    var scoreInput = $(this);
+                    var studentId = scoreInput.data("student-id");
+                    var score = scoreInput.val();
+                    scoresToUpdate.push({
+                      student_id: studentId,
+                      score: score,
+                    });
+                  });
+
+
+                  // 发送POST请求到后端来更新成绩
+                  $.ajax({
+                    url: '{% url "GradeManage:update_scores" %}',
+                    type: "POST",
+                    contentType: "application/json", // 设置contentType为application/json
+                    dataType: "json",
+                    data: JSON.stringify({ // 发送JSON字符串
+                      scores: scoresToUpdate,
+                      course_id: courseId
+                    }),
+                    success: function (response) {
+                      alert("成绩更新成功！");
+                    },
+                    error: function () {
+                      alert("成绩更新失败，请稍后再试。");
+                    }
+                  });
+                });
+              },
+              error: function () {
+                $(".form-content").html(
+                  "<p>无法加载学生名单，请稍后再试。</p>"
+                );
+              },
+            });
+          } else {
+            $(".form-content").html("");
+          }
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}">首页</a>
+      <a href="{% url 'GradeManage:student_list' %}">学生信息</a>
+      <a href="{% url 'GradeManage:course_list' %}">课程信息</a>
+      <a
+        href="{% url 'GradeManage:grade_index' %}"
+        style="color: #3f72af; background-color: #efefef"
+        >成绩管理</a
+      >
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main">
+      <div class="side-bar">
+        <h2>功能选项</h2>
+        <a href="{% url 'GradeManage:grade_index' %}">成绩信息</a>
+        <a href="{% url 'GradeManage:select_course' %}">学生选课</a>
+        <a href="{% url 'GradeManage:score_create' %}">成绩录入</a>
+        <a href="#">成绩报表</a>
+        <a href="{% url 'GradeManage:export_grades_to_csv' %}">导出名单</a>
+      </div>
+      <div class="content">
+        <h1>成绩录入</h1>
+        <div class="unit">
+            <h2>课程成绩录入</h2>
+            <div class="options">
+                <select id="selectCourse" class="select2" style="width: 100%">
+                  <option value="" selected="selected">请选择课程</option>
+                  {% for course in courses %}
+                  <option value="{{ course.course_id }}">
+                    {{ course.course_name }}({{ course.course_id }})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-content">
+                  <p> 待选择课程...</p>
+              </div>
+              <div style="display: flex; justify-content: flex-end;">
+                <button id="submitScores" style='margin-top: 10px; width: 10rem;'>提交成绩</button>
+            </div>
+        </div>
+        <div class="unit">
+            <h2>学生成绩补录</h2>
+            <a class='export' href="{% url 'GradeManage:score_create_stu' %}">新建成绩</a>
+        </div>
+        <div class="unit">
+            <h2>CSV批量录入</h2>
+            <a class='export' href="{% url 'GradeManage:upload_file_grades' %}">导入CSV</a>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // 初始化Select2
+        $(".select2").select2();
+      });
+    </script>
+  </body>
+</html>

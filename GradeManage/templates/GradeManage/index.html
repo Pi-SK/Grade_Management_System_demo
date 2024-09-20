@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+  </head>
+
+  <body>
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}" style="color: #3f72af; background-color: #efefef">首页</a>
+      <a href="{% url 'GradeManage:student_list' %}">学生信息</a>
+      <a href="{% url 'GradeManage:course_list' %}">课程信息</a>
+      <a href="{% url 'GradeManage:grade_index' %}">成绩管理</a>
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main" style='align-items: center; justify-content: center;'>
+        <h1>欢迎进入学生成绩管理系统…</h1>
+    </div>
+
+  </body>
+</html>

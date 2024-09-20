@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程成绩可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-boxplot"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <h1>课程成绩可视化</h1>
+    <canvas id="histogramChart"></canvas>
+    <canvas id="boxplotChart"></canvas>
+    <script>
+        var histogramCtx = document.getElementById('histogramChart').getContext('2d');
+        var histogramChart = new Chart(histogramCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ student_names|safe }},
+                datasets: [{
+                    label: '成绩',
+                    data: {{ scores|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end'
+                    }
+                }
+            }
+        });
+
+        var boxplotCtx = document.getElementById('boxplotChart').getContext('2d');
+        var boxplotChart = new Chart(boxplotCtx, {
+            type: 'boxplot',
+            data: {
+                labels: {{ student_names|safe }},
+                datasets: [{
+                    label: '成绩',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    data: {{ scores|safe }}
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

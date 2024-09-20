@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}">首页</a>
+      <a href="{% url 'GradeManage:student_list' %}" style='color: #3f72af; background-color: #efefef;'>学生信息</a>
+      <a href="{% url 'GradeManage:course_list' %}">课程信息</a>
+      <a href="{% url 'GradeManage:grade_index' %}">成绩管理</a>
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main">
+      <div class="side-bar">
+        <h2>功能选项</h2>
+        <a href="{% url 'GradeManage:student_list' %}">学生信息</a>
+        <a href="{% url 'GradeManage:student_create' %}">新建学生</a>
+        <a class='export' href="{% url 'GradeManage:export_students_to_csv' %}">导出名单</a>
+        <a href="{% url 'GradeManage:upload_file_students' %}">批量导入</a>
+      </div>
+      <div class="content">
+        <h1>学生信息</h1>
+        <div class="options">
+          <form method="get">
+            <label for="id_student_id">学生学号:</label>
+            {{ form.student_id }}
+            <label for="id_student_name" style="margin-left: 1rem;">学生姓名:</label>
+            {{ form.student_name }}
+            <label for="id_major" style="margin-left: 1rem;">专业:</label>
+            {{ form.major }}
+            <label for="id_college" style="margin-left: 1rem;">学院:</label>
+            {{ form.college }}
+            <button type="submit">查询</button>
+          </form>
+        </div>
+        <div class="form-content">
+          <table>
+            <thead>
+              <tr>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>出生日期</th>
+                <th>专业</th>
+                <th>学院</th>
+                <th style="width: 220px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in students %}
+              <tr>
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.gender }}</td>
+                <td>{{ student.birth_date }}</td>
+                <td>{{ student.major }}</td>
+                <td>{{ student.college }}</td>
+                <td
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <!-- 修改按钮 -->
+                  <a
+                    href="{% url 'GradeManage:student_edit' student.student_id %}"
+                    style="color: #3f72af"
+                    >修改</a
+                  >
+                  <p style="color: rgb(90, 90, 90)">|</p>
+                  <!-- 删除按钮 -->
+                  <a
+                    href="{% url 'GradeManage:student_delete' student.student_id %}"
+                    class="delete-btn"
+                    style="color: #e84545"
+                    >删除</a
+                  >
+                  <p style="color: rgb(90, 90, 90)">|</p>
+                  <a
+                    href="{% url 'GradeManage:student_score_chart' student.student_id %}"
+                    style="color: #6f42c1"
+                    >统计</a
+                  >
+                </td>
+                {% empty %}
+              </tr>
+
+              <tr>
+                <td colspan="7">没有查询结果，或筛选组合错误</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="pagination">
+            <div class="button">
+              <span>总共 {{ page_obj.paginator.count }} 条 | 第 {{ page_obj.number }} 页 | 共 {{ page_obj.paginator.num_pages}} 页</span>
+              {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}{% if form.is_bound %}&{{ form.query_string }}{% endif %}">上一页</a>
+              {% else %}
+              <a href="#" class="disabled">上一页</a>
+              {% endif %} 
+              {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{% if form.is_bound %}&{{ form.query_string }}{% endif %}">下一页</a>
+              {% else %}
+              <a href="#" class="disabled">下一页</a>
+              {% endif %}
+            </div>
+            <a id='export-btn' class='export' href="#">导出筛选结果为CSV</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'GradeManage/script.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // 初始化Select2
+        $(".select2").select2();
+      });
+    </script>
+  </body>
+</html>

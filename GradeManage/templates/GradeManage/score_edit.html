@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学生成绩管理系统</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'GradeManage/style_forms.css' %}"
+    />
+    <script src="{% static 'GradeManage/script.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="login">
+      <div class="login_form">
+        <h1>编辑成绩信息</h1>
+        <form method="post">
+          {% csrf_token %} {{ form.as_p }}
+          <button type="submit" style="font-size: 1rem; margin-top: 2rem">提交</button>
+          <a
+            href="{% url 'GradeManage:grade_index' %}"
+            class="btn btn-secondary"
+            >取消</a
+          >
+        </form>
+      </div>
+    </div>
+
+    <div class="header">
+      <h1>学生成绩管理系统</h1>
+      <a href="{% url 'GradeManage:index' %}">首页</a>
+      <a href="{% url 'GradeManage:student_list' %}">学生信息</a>
+      <a href="{% url 'GradeManage:course_list' %}">课程信息</a>
+      <a
+        href="{% url 'GradeManage:grade_index' %}"
+        style="color: #3f72af; background-color: #efefef"
+        >成绩管理</a
+      >
+      <a href="{% url 'admin:login' %}" target="_blank">管理登录</a>
+    </div>
+    <div class="main">
+      <div class="side-bar"></div>
+      <div class="content">
+        <h1>学生信息表</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>学号</th>
+              <th>姓名</th>
+              <th>性别</th>
+              <th>出生日期</th>
+              <th>专业</th>
+              <th>学院</th>
+              <th style="width: 145px">操作</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
